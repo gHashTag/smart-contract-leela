@@ -1,0 +1,949 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [],
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "event",
+    "inputs": [
+      {
+        "name": "commentId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "indexed": true,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "indexed": true,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "actor",
+        "type": "address",
+        "baseType": "address",
+        "indexed": true,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "baseType": "string",
+        "indexed": false,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "baseType": "uint256",
+        "indexed": false,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "action",
+        "type": "uint8",
+        "baseType": "uint8",
+        "indexed": false,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "CommentAction",
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "inputs": [
+      {
+        "name": "roller",
+        "type": "address",
+        "baseType": "address",
+        "indexed": true,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "rolled",
+        "type": "uint8",
+        "baseType": "uint8",
+        "indexed": true,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "currentPlan",
+        "type": "uint256",
+        "baseType": "uint256",
+        "indexed": true,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "DiceRolled",
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "inputs": [
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "indexed": true,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "actor",
+        "type": "address",
+        "baseType": "address",
+        "indexed": true,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "baseType": "string",
+        "indexed": false,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "plan",
+        "type": "uint256",
+        "baseType": "uint256",
+        "indexed": false,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "baseType": "uint256",
+        "indexed": false,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "action",
+        "type": "uint8",
+        "baseType": "uint8",
+        "indexed": false,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "ReportAction",
+    "anonymous": false
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "baseType": "string",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "addComment",
+    "constant": false,
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "playerAddress",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "checkGameStatus",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "isStart",
+        "type": "bool",
+        "baseType": "bool",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "isFinished",
+        "type": "bool",
+        "baseType": "bool",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "comments",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "commentId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "commenter",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "baseType": "string",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "content",
+        "type": "string",
+        "baseType": "string",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "createReport",
+    "constant": false,
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "commentId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "deleteComment",
+    "constant": false,
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "deleteReport",
+    "constant": false,
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "getAllCommentsForReport",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "baseType": "array",
+        "components": null,
+        "arrayLength": -1,
+        "arrayChildren": {
+          "name": "",
+          "type": "tuple",
+          "baseType": "tuple",
+          "components": [
+            {
+              "name": "commentId",
+              "type": "uint256",
+              "baseType": "uint256",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "reportId",
+              "type": "uint256",
+              "baseType": "uint256",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "commenter",
+              "type": "address",
+              "baseType": "address",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "content",
+              "type": "string",
+              "baseType": "string",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "timestamp",
+              "type": "uint256",
+              "baseType": "uint256",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            }
+          ],
+          "arrayLength": null,
+          "arrayChildren": null
+        }
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [],
+    "name": "getAllReports",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "baseType": "array",
+        "components": null,
+        "arrayLength": -1,
+        "arrayChildren": {
+          "name": "",
+          "type": "tuple",
+          "baseType": "tuple",
+          "components": [
+            {
+              "name": "reportId",
+              "type": "uint256",
+              "baseType": "uint256",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "reporter",
+              "type": "address",
+              "baseType": "address",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "content",
+              "type": "string",
+              "baseType": "string",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "plan",
+              "type": "uint256",
+              "baseType": "uint256",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "timestamp",
+              "type": "uint256",
+              "baseType": "uint256",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            },
+            {
+              "name": "commentIds",
+              "type": "uint256[]",
+              "baseType": "array",
+              "components": null,
+              "arrayLength": -1,
+              "arrayChildren": {
+                "name": "",
+                "type": "uint256",
+                "baseType": "uint256",
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null
+              }
+            }
+          ],
+          "arrayLength": null,
+          "arrayChildren": null
+        }
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "player",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "getPlanHistory",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256[]",
+        "baseType": "array",
+        "components": null,
+        "arrayLength": -1,
+        "arrayChildren": {
+          "name": "",
+          "type": "uint256",
+          "baseType": "uint256",
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null
+        }
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "getReport",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "baseType": "tuple",
+        "components": [
+          {
+            "name": "reportId",
+            "type": "uint256",
+            "baseType": "uint256",
+            "components": null,
+            "arrayLength": null,
+            "arrayChildren": null
+          },
+          {
+            "name": "reporter",
+            "type": "address",
+            "baseType": "address",
+            "components": null,
+            "arrayLength": null,
+            "arrayChildren": null
+          },
+          {
+            "name": "content",
+            "type": "string",
+            "baseType": "string",
+            "components": null,
+            "arrayLength": null,
+            "arrayChildren": null
+          },
+          {
+            "name": "plan",
+            "type": "uint256",
+            "baseType": "uint256",
+            "components": null,
+            "arrayLength": null,
+            "arrayChildren": null
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "baseType": "uint256",
+            "components": null,
+            "arrayLength": null,
+            "arrayChildren": null
+          },
+          {
+            "name": "commentIds",
+            "type": "uint256[]",
+            "baseType": "array",
+            "components": null,
+            "arrayLength": -1,
+            "arrayChildren": {
+              "name": "",
+              "type": "uint256",
+              "baseType": "uint256",
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null
+            }
+          }
+        ],
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "player",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "getRollHistory",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8[]",
+        "baseType": "array",
+        "components": null,
+        "arrayLength": -1,
+        "arrayChildren": {
+          "name": "",
+          "type": "uint8",
+          "baseType": "uint8",
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null
+        }
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "playerPlans",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "playerReportCreated",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "baseType": "bool",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "playerRolls",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "baseType": "uint8",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "players",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "plan",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "previousPlan",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "isStart",
+        "type": "bool",
+        "baseType": "bool",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "isFinished",
+        "type": "bool",
+        "baseType": "bool",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "consecutiveSixes",
+        "type": "uint8",
+        "baseType": "uint8",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "reports",
+    "constant": true,
+    "outputs": [
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "reporter",
+        "type": "address",
+        "baseType": "address",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "baseType": "string",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "plan",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "stateMutability": "view",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "rollResult",
+        "type": "uint8",
+        "baseType": "uint8",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "rollDice",
+    "constant": false,
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "commentId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "newContent",
+        "type": "string",
+        "baseType": "string",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "updateCommentContent",
+    "constant": false,
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "gas": null
+  },
+  {
+    "type": "function",
+    "inputs": [
+      {
+        "name": "reportId",
+        "type": "uint256",
+        "baseType": "uint256",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      },
+      {
+        "name": "newContent",
+        "type": "string",
+        "baseType": "string",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
+      }
+    ],
+    "name": "updateReportContent",
+    "constant": false,
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "gas": null
+  }
+]
