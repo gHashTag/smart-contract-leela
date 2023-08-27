@@ -22,6 +22,9 @@ describe('LeelaGame', function () {
     const maxAttempts = 999;
     let diceRollResult = 0;
 
+    // Create a player
+    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
+
     do {
       const rollResult = Math.floor(Math.random() * 6) + 1; // Генерируем новое значение rollResult
       const rollDiceTx = await leelaGame.rollDice(rollResult); // Используем новое значение rollResult
@@ -52,7 +55,8 @@ describe('LeelaGame', function () {
 
   it('Players can create reports after starting the game', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
-
+    // Create a player
+    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
     // Start the game by rolling a 6
     let roll = 0;
     while (roll !== 6) {
@@ -100,7 +104,8 @@ describe('LeelaGame', function () {
 
   it('Player can only start the game after rolling a 6', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
-
+    // Create a player
+    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
     let rollResult = 0;
     while (rollResult !== 6) {
       rollResult = Math.floor(Math.random() * 6) + 1;
@@ -125,7 +130,8 @@ describe('LeelaGame', function () {
 
   it('Players can add, update, and delete comments', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
-
+    // Create a player
+    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
     // Start the game by rolling a 6
     let roll = 0;
     while (roll !== 6) {
@@ -198,19 +204,18 @@ describe('LeelaGame', function () {
   it('Should only allow valid roll results for rollDice', async function () {
     const { leelaGame } = await loadFixture(deployTokenFixture);
 
+    // Create a player
+    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
+
     // Try rolling with an invalid roll result (0)
-    try {
-      await leelaGame.rollDice(0);
-    } catch (error) {
-      expect(error.message).to.include('Invalid roll result.');
-    }
+    await expect(leelaGame.rollDice(0)).to.be.revertedWith(
+      'Invalid roll result: rollResult >= 1 && rollResult <= MAX_ROLL',
+    );
 
     // Try rolling with an invalid roll result (greater than 6)
-    try {
-      await leelaGame.rollDice(7);
-    } catch (error) {
-      expect(error.message).to.include('Invalid roll result.');
-    }
+    await expect(leelaGame.rollDice(7)).to.be.revertedWith(
+      'Invalid roll result: rollResult >= 1 && rollResult <= MAX_ROLL',
+    );
 
     // Try rolling with a valid roll result
     const validRollResult = 4;

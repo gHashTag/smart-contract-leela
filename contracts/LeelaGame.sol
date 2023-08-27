@@ -5,31 +5,7 @@ contract LeelaGame {
   uint8 constant MAX_ROLL = 6;
   uint8 constant WIN_PLAN = 68;
   uint8 constant TOTAL_PLANS = 72;
-
-  constructor() {
-    Player memory newPlayer;
-    newPlayer.plan = 68;
-    newPlayer.previousPlan = 68;
-    players[msg.sender] = newPlayer;
-  }
-
-  event ReportAction(
-    uint256 indexed reportId,
-    address indexed actor,
-    string content,
-    uint256 plan,
-    uint256 timestamp,
-    ActionType action
-  );
-
-  event CommentAction(
-    uint256 indexed commentId,
-    uint256 indexed reportId,
-    address indexed actor,
-    string content,
-    uint256 timestamp,
-    ActionType action
-  );
+  bool private playerCreated;
 
   enum ActionType {
     Created,
@@ -43,12 +19,18 @@ contract LeelaGame {
     uint256 indexed currentPlan
   );
 
+  event RollDiceError(string message);
+
   struct Player {
+    string fullName;
+    string avatar;
+    string intention;
     uint256 plan;
     uint256 previousPlan;
     bool isStart;
     bool isFinished;
     uint8 consecutiveSixes;
+    uint256 positionBeforeThreeSixes;
   }
 
   struct Comment {
@@ -68,6 +50,7 @@ contract LeelaGame {
     uint256[] commentIds;
   }
 
+  uint256 private playerIdCounter;
   uint256 private reportIdCounter;
   uint256 private commentIdCounter;
 
@@ -79,12 +62,68 @@ contract LeelaGame {
   mapping(address => uint256[]) public playerPlans;
   mapping(address => bool) public playerReportCreated;
 
-  function rollDice(uint8 rollResult) external {
-    require(rollResult >= 1 && rollResult <= MAX_ROLL, 'Invalid roll result.');
+  constructor() {
+    Player memory newPlayer;
+    newPlayer.plan = 68;
+    newPlayer.previousPlan = 68;
+    players[msg.sender] = newPlayer;
+  }
 
-    playerRolls[msg.sender].push(rollResult);
+  event PlayerCreated(
+    address indexed player,
+    string fullName,
+    string avatar,
+    string intention
+  );
+
+  event ReportAction(
+    uint256 indexed reportId,
+    address indexed actor,
+    string content,
+    uint256 plan,
+    uint256 timestamp,
+    ActionType action
+  );
+
+  event CommentAction(
+    uint256 indexed commentId,
+    uint256 indexed reportId,
+    address indexed actor,
+    string content,
+    uint256 timestamp,
+    ActionType action
+  );
+
+  function createPlayer(
+    string memory _fullName,
+    string memory _avatar,
+    string memory _intention
+  ) external {
+    require(!playerCreated, 'Player already exists');
+
+    Player memory newPlayer;
+    newPlayer.fullName = _fullName;
+    newPlayer.avatar = _avatar;
+    newPlayer.intention = _intention;
+    newPlayer.plan = 0;
+    players[msg.sender] = newPlayer;
+
+    playerCreated = true;
+
+    emit PlayerCreated(msg.sender, _fullName, _avatar, _intention);
+  }
+
+  function rollDice(uint8 rollResult) external {
+    require(playerCreated, 'Player must be created before rolling the dice');
+
+    require(
+      rollResult >= 1 && rollResult <= MAX_ROLL,
+      'Invalid roll result: rollResult >= 1 && rollResult <= MAX_ROLL'
+    );
 
     Player storage player = players[msg.sender];
+
+    playerRolls[msg.sender].push(rollResult);
 
     if (player.isStart) {
       require(
@@ -107,10 +146,13 @@ contract LeelaGame {
   function handleRollResult(uint8 roll, address playerAddress) private {
     Player storage player = players[playerAddress];
 
+    playerReportCreated[msg.sender] = false;
+
     if (roll == MAX_ROLL) {
+      player.positionBeforeThreeSixes = player.plan;
       player.consecutiveSixes += 1;
       if (player.consecutiveSixes == 3) {
-        player.plan = player.previousPlan;
+        player.plan = player.positionBeforeThreeSixes;
         player.consecutiveSixes = 0;
         return;
       }
@@ -213,10 +255,10 @@ contract LeelaGame {
       'You must start the game before creating a report.'
     );
 
-    reportIdCounter++; // Увеличиваем счетчик
+    reportIdCounter++;
 
     reports[reportIdCounter] = Report({
-      reportId: reportIdCounter, // Сохраняем reportId
+      reportId: reportIdCounter,
       reporter: msg.sender,
       content: content,
       plan: currentPlan,
