@@ -5,21 +5,12 @@ contract LeelaGame {
   uint8 constant MAX_ROLL = 6;
   uint8 constant WIN_PLAN = 68;
   uint8 constant TOTAL_PLANS = 72;
-  bool private playerCreated;
 
   enum ActionType {
     Created,
     Updated,
     Deleted
   }
-
-  event DiceRolled(
-    address indexed roller,
-    uint8 indexed rolled,
-    uint256 indexed currentPlan
-  );
-
-  event RollDiceError(string message);
 
   struct Player {
     string fullName;
@@ -54,13 +45,14 @@ contract LeelaGame {
   uint256 private reportIdCounter;
   uint256 private commentIdCounter;
 
-  mapping(uint256 => Report) public reports;
-  mapping(uint256 => Comment) public comments;
-
+  mapping(address => bool) public playerCreated;
   mapping(address => Player) public players;
   mapping(address => uint8[]) public playerRolls;
   mapping(address => uint256[]) public playerPlans;
   mapping(address => bool) public playerReportCreated;
+
+  mapping(uint256 => Report) public reports;
+  mapping(uint256 => Comment) public comments;
 
   constructor() {
     Player memory newPlayer;
@@ -75,6 +67,21 @@ contract LeelaGame {
     string avatar,
     string intention
   );
+
+  event PlayerUpdated(
+    address indexed player,
+    string fullName,
+    string avatar,
+    string intention
+  );
+
+  event DiceRolled(
+    address indexed roller,
+    uint8 indexed rolled,
+    uint256 indexed currentPlan
+  );
+
+  event RollDiceError(string message);
 
   event ReportAction(
     uint256 indexed reportId,
@@ -99,7 +106,7 @@ contract LeelaGame {
     string memory _avatar,
     string memory _intention
   ) external {
-    require(!playerCreated, 'Player already exists');
+    require(!playerCreated[msg.sender], 'Player already exists');
 
     Player memory newPlayer;
     newPlayer.fullName = _fullName;
@@ -108,13 +115,31 @@ contract LeelaGame {
     newPlayer.plan = 0;
     players[msg.sender] = newPlayer;
 
-    playerCreated = true;
+    playerCreated[msg.sender] = true;
 
     emit PlayerCreated(msg.sender, _fullName, _avatar, _intention);
   }
 
+  function updatePlayer(
+    string memory _fullName,
+    string memory _avatar,
+    string memory _intention
+  ) external {
+    require(playerCreated[msg.sender], 'Player does not exist');
+
+    Player storage player = players[msg.sender];
+    player.fullName = _fullName;
+    player.avatar = _avatar;
+    player.intention = _intention;
+
+    emit PlayerUpdated(msg.sender, _fullName, _avatar, _intention);
+  }
+
   function rollDice(uint8 rollResult) external {
-    require(playerCreated, 'Player must be created before rolling the dice');
+    require(
+      playerCreated[msg.sender],
+      'Player must be created before rolling the dice'
+    );
 
     require(
       rollResult >= 1 && rollResult <= MAX_ROLL,
@@ -229,6 +254,24 @@ contract LeelaGame {
       player.isStart = false;
     }
     emit DiceRolled(playerAddress, roll, newPlan);
+  }
+
+  function getAllPlayers() external view returns (address[] memory) {
+    address[] memory allPlayers = new address[](playerIdCounter);
+    for (uint256 i = 1; i <= playerIdCounter; i++) {
+      allPlayers[i - 1] = address(uint160(i)); // Convert uint to address
+    }
+    return allPlayers;
+  }
+
+  function getPlayer(
+    address playerAddress
+  ) external view returns (Player memory) {
+    require(
+      playerCreated[playerAddress],
+      'Player must be created before accessing player data'
+    );
+    return players[playerAddress];
   }
 
   function getRollHistory(address player) public view returns (uint8[] memory) {

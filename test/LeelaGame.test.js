@@ -15,6 +15,43 @@ describe('LeelaGame', function () {
     return { leelaGame, owner, addr1, addr2 };
   }
 
+  it('Should allow creating a new player', async function () {
+    const { leelaGame, owner } = await loadFixture(deployTokenFixture);
+
+    const createPlayerTx = await leelaGame.createPlayer(
+      'Player 1',
+      'Avatar 1',
+      'Intention 1',
+    );
+    await createPlayerTx.wait();
+
+    const player = await leelaGame.getPlayer(owner.address);
+
+    expect(player.fullName).to.equal('Player 1');
+    expect(player.avatar).to.equal('Avatar 1');
+    expect(player.intention).to.equal('Intention 1');
+    expect(player.plan).to.equal(0);
+  });
+
+  it('Should allow updating player information', async function () {
+    const { leelaGame, owner } = await loadFixture(deployTokenFixture);
+
+    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
+
+    const updatePlayerTx = await leelaGame.updatePlayer(
+      'Updated Player',
+      'Updated Avatar',
+      'Updated Intention',
+    );
+    await updatePlayerTx.wait();
+
+    const player = await leelaGame.getPlayer(owner.address);
+
+    expect(player.fullName).to.equal('Updated Player');
+    expect(player.avatar).to.equal('Updated Avatar');
+    expect(player.intention).to.equal('Updated Intention');
+  });
+
   it('Should roll the dice until game is won', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
     let gameStatus;
