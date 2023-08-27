@@ -557,32 +557,6 @@
   {
     "type": "function",
     "inputs": [],
-    "name": "getAllPlayers",
-    "constant": true,
-    "outputs": [
-      {
-        "name": "",
-        "type": "address[]",
-        "baseType": "array",
-        "components": null,
-        "arrayLength": -1,
-        "arrayChildren": {
-          "name": "",
-          "type": "address",
-          "baseType": "address",
-          "components": null,
-          "arrayLength": null,
-          "arrayChildren": null
-        }
-      }
-    ],
-    "stateMutability": "view",
-    "payable": false,
-    "gas": null
-  },
-  {
-    "type": "function",
-    "inputs": [],
     "name": "getAllReports",
     "constant": true,
     "outputs": [

@@ -256,14 +256,6 @@ contract LeelaGame {
     emit DiceRolled(playerAddress, roll, newPlan);
   }
 
-  function getAllPlayers() external view returns (address[] memory) {
-    address[] memory allPlayers = new address[](playerIdCounter);
-    for (uint256 i = 1; i <= playerIdCounter; i++) {
-      allPlayers[i - 1] = address(uint160(i)); // Convert uint to address
-    }
-    return allPlayers;
-  }
-
   function getPlayer(
     address playerAddress
   ) external view returns (Player memory) {
