@@ -6,7 +6,7 @@ contract LeelaGame {
   uint8 constant WIN_PLAN = 68;
   uint8 constant TOTAL_PLANS = 72;
 
-  enum ActionType {
+  enum Action {
     Created,
     Updated,
     Deleted
@@ -61,18 +61,12 @@ contract LeelaGame {
     players[msg.sender] = newPlayer;
   }
 
-  event PlayerCreated(
+  event PlayerAction(
     address indexed player,
     string fullName,
     string avatar,
-    string intention
-  );
-
-  event PlayerUpdated(
-    address indexed player,
-    string fullName,
-    string avatar,
-    string intention
+    string intention,
+    Action action
   );
 
   event DiceRolled(
@@ -89,7 +83,7 @@ contract LeelaGame {
     string content,
     uint256 plan,
     uint256 timestamp,
-    ActionType action
+    Action action
   );
 
   event CommentAction(
@@ -98,41 +92,49 @@ contract LeelaGame {
     address indexed actor,
     string content,
     uint256 timestamp,
-    ActionType action
+    Action action
   );
 
-  function createPlayer(
+  function createOrUpdateOrDeletePlayer(
     string memory _fullName,
     string memory _avatar,
-    string memory _intention
+    string memory _intention,
+    Action action
   ) external {
-    require(!playerCreated[msg.sender], 'Player already exists');
-
-    Player memory newPlayer;
-    newPlayer.fullName = _fullName;
-    newPlayer.avatar = _avatar;
-    newPlayer.intention = _intention;
-    newPlayer.plan = 0;
-    players[msg.sender] = newPlayer;
-
-    playerCreated[msg.sender] = true;
-
-    emit PlayerCreated(msg.sender, _fullName, _avatar, _intention);
-  }
-
-  function updatePlayer(
-    string memory _fullName,
-    string memory _avatar,
-    string memory _intention
-  ) external {
-    require(playerCreated[msg.sender], 'Player does not exist');
-
     Player storage player = players[msg.sender];
-    player.fullName = _fullName;
-    player.avatar = _avatar;
-    player.intention = _intention;
 
-    emit PlayerUpdated(msg.sender, _fullName, _avatar, _intention);
+    if (action == Action.Created) {
+      require(!playerCreated[msg.sender], 'Player already exists');
+      player.fullName = _fullName;
+      player.avatar = _avatar;
+      player.intention = _intention;
+      player.plan = 0;
+      playerCreated[msg.sender] = true;
+      emit PlayerAction(
+        msg.sender,
+        _fullName,
+        _avatar,
+        _intention,
+        Action.Created
+      );
+    } else if (action == Action.Updated) {
+      require(playerCreated[msg.sender], 'Player does not exist');
+      player.fullName = _fullName;
+      player.avatar = _avatar;
+      player.intention = _intention;
+      emit PlayerAction(
+        msg.sender,
+        _fullName,
+        _avatar,
+        _intention,
+        Action.Updated
+      );
+    } else if (action == Action.Deleted) {
+      require(playerCreated[msg.sender], 'Player does not exist');
+      delete players[msg.sender];
+      delete playerCreated[msg.sender];
+      emit PlayerAction(msg.sender, '', '', '', Action.Deleted);
+    }
   }
 
   function rollDice(uint8 rollResult) external {
@@ -309,7 +311,7 @@ contract LeelaGame {
       content,
       currentPlan,
       block.timestamp,
-      ActionType.Created
+      Action.Created
     );
   }
 
@@ -330,7 +332,7 @@ contract LeelaGame {
       newContent,
       report.plan,
       block.timestamp,
-      ActionType.Updated
+      Action.Updated
     );
   }
 
@@ -349,7 +351,7 @@ contract LeelaGame {
       'This report has been deleted.',
       report.plan,
       block.timestamp,
-      ActionType.Deleted
+      Action.Deleted
     );
   }
 
@@ -403,7 +405,7 @@ contract LeelaGame {
       msg.sender,
       content,
       block.timestamp,
-      ActionType.Created
+      Action.Created
     );
   }
 
@@ -425,7 +427,7 @@ contract LeelaGame {
       msg.sender,
       newContent,
       block.timestamp,
-      ActionType.Updated
+      Action.Updated
     );
   }
 
@@ -454,7 +456,7 @@ contract LeelaGame {
       msg.sender,
       comment.content,
       block.timestamp,
-      ActionType.Deleted
+      Action.Deleted
     );
   }
 }

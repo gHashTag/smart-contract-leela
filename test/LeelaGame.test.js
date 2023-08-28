@@ -4,6 +4,12 @@ const {
   loadFixture,
 } = require('@nomicfoundation/hardhat-toolbox/network-helpers');
 
+const Action = {
+  Created: 0,
+  Updated: 1,
+  Deleted: 2,
+};
+
 describe('LeelaGame', function () {
   async function deployTokenFixture() {
     const [owner, addr1, addr2] = await ethers.getSigners();
@@ -15,56 +21,55 @@ describe('LeelaGame', function () {
     return { leelaGame, owner, addr1, addr2 };
   }
 
-  it('Should allow creating a new player', async function () {
+  it('Should allow creating or updating a player', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
 
-    const createPlayerTx = await leelaGame.createPlayer(
+    const createPlayerTx = await leelaGame.createOrUpdateOrDeletePlayer(
       'Player 1',
       'Avatar 1',
       'Intention 1',
+      Action.Created,
     );
     await createPlayerTx.wait();
 
-    const player = await leelaGame.getPlayer(owner.address);
-
+    let player = await leelaGame.getPlayer(owner.address);
     expect(player.fullName).to.equal('Player 1');
     expect(player.avatar).to.equal('Avatar 1');
     expect(player.intention).to.equal('Intention 1');
     expect(player.plan).to.equal(0);
-  });
 
-  it('Should allow updating player information', async function () {
-    const { leelaGame, owner } = await loadFixture(deployTokenFixture);
-
-    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
-
-    const updatePlayerTx = await leelaGame.updatePlayer(
+    const updatePlayerTx = await leelaGame.createOrUpdateOrDeletePlayer(
       'Updated Player',
       'Updated Avatar',
       'Updated Intention',
+      Action.Updated,
     );
     await updatePlayerTx.wait();
 
-    const player = await leelaGame.getPlayer(owner.address);
-
+    player = await leelaGame.getPlayer(owner.address);
     expect(player.fullName).to.equal('Updated Player');
     expect(player.avatar).to.equal('Updated Avatar');
     expect(player.intention).to.equal('Updated Intention');
   });
 
-  it('Should roll the dice until game is won', async function () {
+  it('Should roll the dice until the game is won', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
     let gameStatus;
     let attempts = 0;
     const maxAttempts = 999;
-    let diceRollResult = 0;
 
     // Create a player
-    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
+    const createPlayerTx = await leelaGame.createOrUpdateOrDeletePlayer(
+      'Player 1',
+      'Avatar 1',
+      'Intention 1',
+      Action.Created,
+    );
+    await createPlayerTx.wait();
 
     do {
-      const rollResult = Math.floor(Math.random() * 6) + 1; // Генерируем новое значение rollResult
-      const rollDiceTx = await leelaGame.rollDice(rollResult); // Используем новое значение rollResult
+      const rollResult = Math.floor(Math.random() * 6) + 1;
+      const rollDiceTx = await leelaGame.rollDice(rollResult);
       const receipt = await rollDiceTx.wait();
 
       gameStatus = await leelaGame.checkGameStatus(owner.address);
@@ -72,17 +77,13 @@ describe('LeelaGame', function () {
       if (receipt.logs.length > 0) {
         const diceRolledEvent = receipt.logs[0];
         const currentRollResult = Number(diceRolledEvent.args.rolled);
-        // console.log('diceRollResult', currentRollResult);
-        diceRollResult = currentRollResult;
-        // console.log('gameStatus.isStart', gameStatus.isStart);
+
         if (gameStatus.isStart) {
           const createReportTx = await leelaGame.createReport('Turn report');
           await createReportTx.wait();
         }
       }
 
-      const planHistory = await leelaGame.getPlanHistory(owner.address);
-      // console.log('planHistory', planHistory);
       attempts++;
     } while (!gameStatus.isFinished && attempts < maxAttempts);
 
@@ -90,15 +91,21 @@ describe('LeelaGame', function () {
     expect(gameStatus.isFinished).to.equal(true);
   });
 
-  it('Players can create reports after starting the game', async function () {
+  it('Players can create, update, and delete reports', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
     // Create a player
-    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
+    const createPlayerTx = await leelaGame.createOrUpdateOrDeletePlayer(
+      'Player 1',
+      'Avatar 1',
+      'Intention 1',
+      Action.Created,
+    );
+    await createPlayerTx.wait();
+
     // Start the game by rolling a 6
     let roll = 0;
     while (roll !== 6) {
       const rollResult = Math.floor(Math.random() * 6) + 1;
-      // console.log('rollResult', rollResult);
       const rollDiceTx = await leelaGame.rollDice(rollResult);
       const receipt = await rollDiceTx.wait();
 
@@ -127,7 +134,7 @@ describe('LeelaGame', function () {
     await updateReportTx.wait();
 
     // Get the updated report and check if the content is updated
-    const updatedReport = await leelaGame.reports(lastReport.reportId);
+    const updatedReport = await leelaGame.getReport(lastReport.reportId);
     expect(updatedReport.content).to.equal('Updated report content');
 
     // Delete the report
@@ -135,14 +142,21 @@ describe('LeelaGame', function () {
     await deleteReportTx.wait();
 
     // Get the deleted report and check if the content is updated
-    const deletedReport = await leelaGame.reports(lastReport.reportId);
+    const deletedReport = await leelaGame.getReport(lastReport.reportId);
     expect(deletedReport.content).to.equal('This report has been deleted.');
   });
 
   it('Player can only start the game after rolling a 6', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
     // Create a player
-    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
+    const createPlayerTx = await leelaGame.createOrUpdateOrDeletePlayer(
+      'Player 1',
+      'Avatar 1',
+      'Intention 1',
+      Action.Created,
+    );
+    await createPlayerTx.wait();
+
     let rollResult = 0;
     while (rollResult !== 6) {
       rollResult = Math.floor(Math.random() * 6) + 1;
@@ -168,7 +182,13 @@ describe('LeelaGame', function () {
   it('Players can add, update, and delete comments', async function () {
     const { leelaGame, owner } = await loadFixture(deployTokenFixture);
     // Create a player
-    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
+    const createPlayerTx = await leelaGame.createOrUpdateOrDeletePlayer(
+      'Player 1',
+      'Avatar 1',
+      'Intention 1',
+      Action.Created,
+    );
+    await createPlayerTx.wait();
     // Start the game by rolling a 6
     let roll = 0;
     while (roll !== 6) {
@@ -242,7 +262,13 @@ describe('LeelaGame', function () {
     const { leelaGame } = await loadFixture(deployTokenFixture);
 
     // Create a player
-    await leelaGame.createPlayer('Player 1', 'Avatar 1', 'Intention 1');
+    const createPlayerTx = await leelaGame.createOrUpdateOrDeletePlayer(
+      'Player 1',
+      'Avatar 1',
+      'Intention 1',
+      Action.Created,
+    );
+    await createPlayerTx.wait();
 
     // Try rolling with an invalid roll result (0)
     await expect(leelaGame.rollDice(0)).to.be.revertedWith(
