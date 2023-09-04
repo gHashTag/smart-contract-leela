@@ -284,4 +284,36 @@ describe('LeelaGame', function () {
     const validRollResult = 4;
     await leelaGame.rollDice(validRollResult);
   });
+
+  it('Should allow toggling like for a report', async function () {
+    const { leelaGame, owner, addr1 } = await loadFixture(deployTokenFixture);
+
+    const createPlayerTx = await leelaGame.createOrUpdateOrDeletePlayer(
+      'Player 1',
+      'Avatar 1',
+      'Intention 1',
+      Action.Created,
+    );
+    await createPlayerTx.wait();
+    const rollDiceTx = await leelaGame.rollDice(6);
+    await rollDiceTx.wait();
+
+    const createReportTx = await leelaGame.createReport('Test report');
+    const createReportReceipt = await createReportTx.wait();
+
+    const reportId = createReportReceipt.logs[0].args[0];
+
+    // Like the report
+    const toggleLike = await leelaGame.toggleLikeReport(reportId, true);
+
+    const reportWithLikes = await leelaGame.getReport(reportId);
+
+    expect(reportWithLikes.likes).to.equal(1);
+
+    // Unlike the report
+    await leelaGame.toggleLikeReport(reportId, false);
+    const reportWithUnlikes = await leelaGame.getReport(reportId);
+
+    expect(reportWithUnlikes.likes).to.equal(0);
+  });
 });

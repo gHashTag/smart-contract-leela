@@ -138,52 +138,18 @@
         "components": null,
         "arrayLength": null,
         "arrayChildren": null
-      }
-    ],
-    "name": "PlayerCreated",
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "inputs": [
-      {
-        "name": "player",
-        "type": "address",
-        "baseType": "address",
-        "indexed": true,
-        "components": null,
-        "arrayLength": null,
-        "arrayChildren": null
       },
       {
-        "name": "fullName",
-        "type": "string",
-        "baseType": "string",
-        "indexed": false,
-        "components": null,
-        "arrayLength": null,
-        "arrayChildren": null
-      },
-      {
-        "name": "avatar",
-        "type": "string",
-        "baseType": "string",
-        "indexed": false,
-        "components": null,
-        "arrayLength": null,
-        "arrayChildren": null
-      },
-      {
-        "name": "intention",
-        "type": "string",
-        "baseType": "string",
+        "name": "action",
+        "type": "uint8",
+        "baseType": "uint8",
         "indexed": false,
         "components": null,
         "arrayLength": null,
         "arrayChildren": null
       }
     ],
-    "name": "PlayerUpdated",
+    "name": "PlayerAction",
     "anonymous": false
   },
   {
@@ -412,9 +378,17 @@
         "components": null,
         "arrayLength": null,
         "arrayChildren": null
+      },
+      {
+        "name": "action",
+        "type": "uint8",
+        "baseType": "uint8",
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null
       }
     ],
-    "name": "createPlayer",
+    "name": "createOrUpdateOrDeletePlayer",
     "constant": false,
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -1211,41 +1185,6 @@
       }
     ],
     "name": "updateCommentContent",
-    "constant": false,
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "payable": false,
-    "gas": null
-  },
-  {
-    "type": "function",
-    "inputs": [
-      {
-        "name": "_fullName",
-        "type": "string",
-        "baseType": "string",
-        "components": null,
-        "arrayLength": null,
-        "arrayChildren": null
-      },
-      {
-        "name": "_avatar",
-        "type": "string",
-        "baseType": "string",
-        "components": null,
-        "arrayLength": null,
-        "arrayChildren": null
-      },
-      {
-        "name": "_intention",
-        "type": "string",
-        "baseType": "string",
-        "components": null,
-        "arrayLength": null,
-        "arrayChildren": null
-      }
-    ],
-    "name": "updatePlayer",
     "constant": false,
     "outputs": [],
     "stateMutability": "nonpayable",

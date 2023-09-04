@@ -27,6 +27,9 @@ contract LeelaGame {
   struct Comment {
     uint256 commentId;
     uint256 reportId;
+    string avatar;
+    string fullName;
+    uint256 plan;
     address commenter;
     string content;
     uint256 timestamp;
@@ -35,10 +38,13 @@ contract LeelaGame {
   struct Report {
     uint256 reportId;
     address reporter;
+    string avatar;
+    string fullName;
     string content;
     uint256 plan;
     uint256 timestamp;
     uint256[] commentIds;
+    uint256 likes;
   }
 
   uint256 private playerIdCounter;
@@ -75,11 +81,11 @@ contract LeelaGame {
     uint256 indexed currentPlan
   );
 
-  event RollDiceError(string message);
-
   event ReportAction(
     uint256 indexed reportId,
     address indexed actor,
+    string avatar,
+    string fullName,
     string content,
     uint256 plan,
     uint256 timestamp,
@@ -90,10 +96,15 @@ contract LeelaGame {
     uint256 indexed commentId,
     uint256 indexed reportId,
     address indexed actor,
+    string avatar,
+    string fullName,
+    uint256 plan,
     string content,
     uint256 timestamp,
     Action action
   );
+
+  event ReportLiked(uint256 indexed reportId, bool like, uint256 likes);
 
   function createOrUpdateOrDeletePlayer(
     string memory _fullName,
@@ -297,10 +308,13 @@ contract LeelaGame {
     reports[reportIdCounter] = Report({
       reportId: reportIdCounter,
       reporter: msg.sender,
+      avatar: players[msg.sender].avatar,
+      fullName: players[msg.sender].fullName,
       content: content,
       plan: currentPlan,
       timestamp: block.timestamp,
-      commentIds: new uint256[](0)
+      commentIds: new uint256[](0),
+      likes: 0
     });
 
     playerReportCreated[msg.sender] = true;
@@ -308,6 +322,8 @@ contract LeelaGame {
     emit ReportAction(
       reportIdCounter,
       msg.sender,
+      players[msg.sender].avatar,
+      players[msg.sender].fullName,
       content,
       currentPlan,
       block.timestamp,
@@ -329,6 +345,8 @@ contract LeelaGame {
     emit ReportAction(
       reportId,
       msg.sender,
+      players[msg.sender].avatar,
+      players[msg.sender].fullName,
       newContent,
       report.plan,
       block.timestamp,
@@ -348,6 +366,8 @@ contract LeelaGame {
     emit ReportAction(
       reportId,
       msg.sender,
+      players[msg.sender].avatar,
+      players[msg.sender].fullName,
       'This report has been deleted.',
       report.plan,
       block.timestamp,
@@ -393,6 +413,9 @@ contract LeelaGame {
       commentId: commentIdCounter,
       reportId: reportId,
       commenter: msg.sender,
+      avatar: players[msg.sender].avatar,
+      fullName: players[msg.sender].fullName,
+      plan: players[msg.sender].plan,
       content: content,
       timestamp: block.timestamp
     });
@@ -403,6 +426,9 @@ contract LeelaGame {
       commentIdCounter,
       reportId,
       msg.sender,
+      players[msg.sender].avatar,
+      players[msg.sender].fullName,
+      players[msg.sender].plan,
       content,
       block.timestamp,
       Action.Created
@@ -425,6 +451,9 @@ contract LeelaGame {
       commentId,
       comment.reportId,
       msg.sender,
+      players[msg.sender].avatar,
+      players[msg.sender].fullName,
+      players[msg.sender].plan,
       newContent,
       block.timestamp,
       Action.Updated
@@ -454,9 +483,30 @@ contract LeelaGame {
       commentId,
       comment.reportId,
       msg.sender,
+      players[msg.sender].avatar,
+      players[msg.sender].fullName,
+      players[msg.sender].plan,
       comment.content,
       block.timestamp,
       Action.Deleted
     );
+  }
+
+  function toggleLikeReport(
+    uint256 reportId,
+    bool like
+  ) external returns (uint256) {
+    Report storage report = reports[reportId];
+
+    if (like) {
+      report.likes++;
+      emit ReportLiked(reportId, like, report.likes);
+      return report.likes;
+    } else {
+      require(report.likes > 0, 'Report has no likes.');
+      report.likes--;
+      emit ReportLiked(reportId, like, report.likes);
+      return report.likes;
+    }
   }
 }
